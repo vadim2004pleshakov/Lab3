@@ -257,48 +257,42 @@ class Graph {
             this.deleteVer(toDelete[i]);
         }
     }
-    //список ребер до которых можно добраться за два шага
+   //список ребер до которых можно добраться за два шага
     public void twoSteps(int a) {
         this.inNsteps(a,2);
     }
     //список ребер куда можно добраться за n шагов
     public void inNsteps(int a, int n) {
-        int[] v = new int[0];
-        int[] res = inNstepsRecursive(a, n, v);
-        for (int i = 0; i < res.length; i++) {
-            System.out.print(res[i] + " ");
+        int[]res=new int[1];
+        res[0]=a;
+        res=inNstepsRecursive(a,n,res);
+        for(int i=0;i<res.length;i++){
+            System.out.print(res[i]+" ");
         }
     }
     //рекурсия
-    private int[] inNstepsRecursive(int cur, int steps, int[] v) {
-        if (steps == 0) {
-            if (!contains(v, cur)) {
-                v = sizePlus(v);
-                v[v.length - 1] = cur;
+    private int[] inNstepsRecursive(int a, int n, int[]res) {
+        if(n==0){
+            return deleteRepeats(res);
+        }
+        else {
+            int[]nres=new int[0];
+            int c=0;
+            for(int i=0;i<res.length;i++){
+                for(int j=0;j<this.Edges.length;j++){
+                    if(Edges[j].from==res[i]){
+                        nres=sizePlus(nres);
+                        nres[c]=Edges[j].to;
+                        c++;
+                    }
+                }
             }
-            return v;
-        }
-        int[] n = oneStep(cur);
-        int[] result = v;
-        for (int ng : n) {
-            if (!contains(result, ng)) {
-                result = inNstepsRecursive(ng, steps - 1, result);
+            for(int i=0;i<nres.length;i++){
+                res=sizePlus(res);
+                res[res.length-1]=nres[i];
             }
+            return inNstepsRecursive(a,n-1,res);
         }
-        if (!contains(result, cur)) {
-            result = sizePlus(result);
-            result[result.length - 1] = cur;
-        }
-        return result;
-    }
-    //проверка на содержание
-    private boolean contains(int[] ar, int v) {
-        for (int i = 0; i < ar.length; i++) {
-            if (ar[i] == v) {
-                return true;
-            }
-        }
-        return false;
     }
     //сумма графов
     public static Graph sumOfGraphs(Graph a, Graph b) {
